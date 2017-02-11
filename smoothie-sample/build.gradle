@@ -3,19 +3,15 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.0.0'
-    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+    classpath 'com.android.tools.build:gradle:2.2.3'
   }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
   compileSdkVersion 23
-  buildToolsVersion '23.0.3'
+  buildToolsVersion '24.0.0'
 
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
@@ -28,6 +24,20 @@ android {
     targetSdkVersion 23
     versionCode 1
     versionName '1.0.0'
+
+    jackOptions {
+      enabled true
+    }
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments = [
+          toothpick_registry_package_name: 'com.example.smoothie',
+          toothpick_registry_children_package_names: 'toothpick.smoothie'
+        ]
+      }
+    }
+
   }
 }
 
@@ -40,8 +50,8 @@ dependencies {
   compile project(':toothpick-runtime')
   // We cannot update to annotationProcessor for the sample as we need to keep compatibility with Java 7.
   // However, it is possible to use it instead of apt.
-  apt project(':toothpick-compiler')
-  apt deps.butterknife_compiler
+  annotationProcessor project(':toothpick-compiler')
+  annotationProcessor deps.butterknife_compiler
   compile deps.butterknife
   compile deps.rxandroid
 
@@ -51,9 +61,3 @@ dependencies {
   testCompile deps.robolectric
 }
 
-apt {
-  arguments {
-    'toothpick_registry_package_name' 'com.example.smoothie'
-    'toothpick_registry_children_package_names' 'toothpick.smoothie'
-  }
-}
